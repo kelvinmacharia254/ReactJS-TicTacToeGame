@@ -8,7 +8,7 @@ const initialGameBoard = [
     [null, null, null],
 ]
 
-export default function GameBoard() {
+export default function GameBoard({onselectSquare, activePlayer}) {
     const [gameBoard, setGameBoard] = React.useState(initialGameBoard)
 
     function handleSelectedSquare(rowIndex, colIndex){
@@ -16,9 +16,10 @@ export default function GameBoard() {
             // make a shallow copy. Spread operator only goes one level into an array
             // Use map() to make a shallow copy by iterating through the 2D array
             const updatedBoard = [...prevGameBoard].map((innerArray)=>[...innerArray]);
-            updatedBoard[rowIndex][colIndex] = "X"; //
+            updatedBoard[rowIndex][colIndex] = activePlayer; //
             return updatedBoard;
         })
+        onselectSquare();
     }
 
     return (
