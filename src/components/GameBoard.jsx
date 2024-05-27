@@ -13,11 +13,12 @@ export default function GameBoard({onselectSquare, activePlayer}) {
 
     function handleSelectedSquare(rowIndex, colIndex){
         setGameBoard((prevGameBoard) => {
-            // make a shallow copy. Spread operator only goes one level into an array
-            // Use map() to make a shallow copy by iterating through the 2D array
+            // make a shallow copy. Spread operator only goes one level into an array, use it together with
+            //  the map() method to go even deeper to make a shallow copy by iterating through the 2D array.
+            // Here we are updating the state immutably by first make a copy of it
             const updatedBoard = [...prevGameBoard].map((innerArray)=>[...innerArray]);
             updatedBoard[rowIndex][colIndex] = activePlayer; //
-            return updatedBoard;
+            return updatedBoard; // return entire boardGame updated
         })
         onselectSquare();
     }
