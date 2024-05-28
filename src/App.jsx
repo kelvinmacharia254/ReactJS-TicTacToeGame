@@ -17,15 +17,17 @@ function App() {
     <>
       <main>
         <div id="game-container">
-            <ol id="players">
+            <ol id="players" className="highlight-player">
                 {/*use props to pass player 1 and player 2 details */}
                 <Player
                     initialName='Player 1'
                     symbol='X'
+                    isActive={activePlayerSymbol === "X"}
                 />
                 <Player
                     initialName='Player 2'
                     symbol='O'
+                    isActive={activePlayerSymbol === "O"}
                 />
             </ol>
 
