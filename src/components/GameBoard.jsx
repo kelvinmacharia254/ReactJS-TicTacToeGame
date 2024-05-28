@@ -1,5 +1,5 @@
 
-import React from "react";
+import {useState} from 'react'
 // declare tictactoe board intial state
 // use nested array
 const initialGameBoard = [
@@ -9,7 +9,7 @@ const initialGameBoard = [
 ]
 
 export default function GameBoard({onselectSquare, activePlayer}) {
-    const [gameBoard, setGameBoard] = React.useState(initialGameBoard)
+    const [gameBoard, setGameBoard] = useState(initialGameBoard)
 
     function handleSelectedSquare(rowIndex, colIndex){
         setGameBoard((prevGameBoard) => {
@@ -33,6 +33,7 @@ export default function GameBoard({onselectSquare, activePlayer}) {
                                 <button
                                 onClick={() =>
                                     handleSelectedSquare(rowIndex, colIndex)}
+                                    disabled={playerSymbol != null} // disable when played to avoid overwrite
                                 >
                                     {playerSymbol}
                                 </button>
