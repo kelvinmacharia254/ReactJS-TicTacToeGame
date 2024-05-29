@@ -1,3 +1,4 @@
+// there are only possible 8 win combinations in a tictactoe game
 export const WINNING_COMBINATIONS = [
     [
         { row: 0, column: 0 }, // row one triples
