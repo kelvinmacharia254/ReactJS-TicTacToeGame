@@ -1,21 +1,4 @@
-
-import {useState} from 'react'
-// declare tictactoe board intial state
-// use nested array
-const initialGameBoard = [
-    [null, null, null],
-    [null, null, null],
-    [null, null, null],
-]
-
-export default function GameBoard({onselectSquare, turns}) {
-    let gameBoard =  initialGameBoard;
-
-    for(const turn of turns){
-        const {square, player} = turn
-        const {row, col} = square
-        gameBoard[row][col] = player
-    }
+export default function GameBoard({onselectSquare, board}) {
 
     // function handleSelectedSquare(rowIndex, colIndex){
     //     setGameBoard((prevGameBoard) => {
@@ -31,7 +14,7 @@ export default function GameBoard({onselectSquare, turns}) {
 
     return (
         <ol id="game-board"> {/* ol acts the board container for structure & styling purposes */}
-            {gameBoard.map((row, rowIndex)=>(
+            {board.map((row, rowIndex)=>(
                 <li key={rowIndex}> {/* this holds each row with each row identified with a key = rowIndex */}
                     <ol>
                         {row.map((playerSymbol, colIndex)=>(
