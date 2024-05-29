@@ -13,6 +13,7 @@ const initialGameBoard = [
 
 // winning combinations data
 import {WINNING_COMBINATIONS} from "./winningCombinations.js";
+import GameOver from "./components/GameOver.jsx";
 
 function deriveActivePlayer(gameTurns) {
   let currentPlayer = "X"; // player X goes first and switched after 'O' has played their turn
@@ -47,28 +48,6 @@ function App() {
     }
 
 
-    // winner logic
-    // get the 1st, 2nd and 3rd square row & column indexes for each winning combination ...
-    // ... fetch symbols using these indexes on current gameBoard state and see if they are equal.
-    // if equal then there is a winner
-    // if not, no winner
-    let winner
-
-    for(const combinations of WINNING_COMBINATIONS) {
-        const firstSquareSymbol = gameBoard[combinations[0].row][combinations[0].column]
-        const secondSquareSymbol = gameBoard[combinations[1].row][combinations[1].column]
-        const thirdSquareSymbol = gameBoard[combinations[2].row][combinations[2].column]
-
-        if (
-              firstSquareSymbol &&
-              firstSquareSymbol === secondSquareSymbol &&
-              firstSquareSymbol === thirdSquareSymbol
-            ) {
-              winner = firstSquareSymbol
-        }
-    }
-
-
     function handleSelectSquare(rowIndex, colIndex) {
         // Every time a player plays, this state update is called to determine whose next
         //  and also update the gameBoard.
@@ -92,6 +71,36 @@ function App() {
         });
     }
 
+    // winner logic
+    // get the 1st, 2nd and 3rd square row & column indexes for each winning combination ...
+    // ... fetch symbols using these indexes on current gameBoard state and see if they are equal.
+    // if equal then there is a winner
+    // if not, no winner
+    let winner
+
+    for(const combinations of WINNING_COMBINATIONS) {
+        const firstSquareSymbol = gameBoard[combinations[0].row][combinations[0].column]
+        const secondSquareSymbol = gameBoard[combinations[1].row][combinations[1].column]
+        const thirdSquareSymbol = gameBoard[combinations[2].row][combinations[2].column]
+
+        if (
+              firstSquareSymbol &&
+              firstSquareSymbol === secondSquareSymbol &&
+              firstSquareSymbol === thirdSquareSymbol
+            ) {
+              winner = firstSquareSymbol
+        }
+    }
+
+    // game draw logic
+    // Condition: all squares played and no winner is a draw
+    const draw = gameTurns.length === 9 && !winner
+
+    // reset game
+    // trigger page reload by resetting GameTurns state
+    function restart(){
+        setGameTurns([])
+    }
 
   return (
     <>
@@ -110,7 +119,7 @@ function App() {
                     isActive={activePlayer === "O"}
                 />
             </ol>
-            {winner && <p>{winner} Won!</p>}
+            {(winner || draw ) && <GameOver winner={winner} onRestart ={restart}/>}
             <GameBoard
                 onselectSquare={handleSelectSquare}
                 board = {gameBoard}
