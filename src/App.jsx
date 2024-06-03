@@ -5,16 +5,59 @@ import Log from "./components/Log.jsx";
 
 // declare tictactoe board initial state
 // use nested array
-const initialGameBoard = [
+const INITIAL_GAME_BOARD = [
     [null, null, null],
     [null, null, null],
     [null, null, null],
 ]
 
+// initial player names
+const PLAYERS ={
+    X:'Player 1',
+    O :'Player 2'
+}
+
 // winning combinations data
 import {WINNING_COMBINATIONS} from "./winningCombinations.js";
 import GameOver from "./components/GameOver.jsx";
 
+// Derive gameboard
+function deriveGameBoard(gameTurns){
+    let gameBoard = [...INITIAL_GAME_BOARD.map(innerArray => [...innerArray])]; // GameBoard initial state
+
+    // Derive gameBoard from gameTurns state
+    for (const turn of gameTurns) {
+        const { square, player } = turn;
+        const { row, col } = square;
+
+        gameBoard[row][col] = player;
+    }
+    return gameBoard;
+}
+
+function deriveWinner(gameBoard, players){
+    // winner logic
+    // get the 1st, 2nd and 3rd square row & column indexes for each winning combination ...
+    // ... fetch symbols using these indexes on current gameBoard state and see if they are equal.
+    // if equal then there is a winner
+    // if not, no winner
+    let winner;
+
+    for(const combinations of WINNING_COMBINATIONS) {
+        const firstSquareSymbol = gameBoard[combinations[0].row][combinations[0].column]
+        const secondSquareSymbol = gameBoard[combinations[1].row][combinations[1].column]
+        const thirdSquareSymbol = gameBoard[combinations[2].row][combinations[2].column]
+
+        if (
+              firstSquareSymbol &&
+              firstSquareSymbol === secondSquareSymbol &&
+              firstSquareSymbol === thirdSquareSymbol
+            ) {
+              winner = players[firstSquareSymbol]
+        }
+    }
+    return winner;
+}
 function deriveActivePlayer(gameTurns) {
   let currentPlayer = "X"; // player X goes first and switched after 'O' has played their turn
 
@@ -29,23 +72,17 @@ function deriveActivePlayer(gameTurns) {
   return currentPlayer;
 }
 function App() {
-    // manage active player state. But deprecate and derive from gameTurns to remove intersecting states
     // const[activePlayerSymbol, setActivePlayerSymbol] = useState("X");
-
+    const [players, setPlayers] = useState(PLAYERS);
     const[gameTurns, setGameTurns] = useState([]);
 
     // Derive activePlayer from gameTurns state
     const activePlayer= deriveActivePlayer(gameTurns)
 
-    let gameBoard = [...initialGameBoard.map(innerArray => [...innerArray])]; // GameBoard initial state
-
     // Derive gameBoard from gameTurns state
-    for (const turn of gameTurns) {
-        const { square, player } = turn;
-        const { row, col } = square;
+    let gameBoard = deriveGameBoard(gameTurns)
 
-        gameBoard[row][col] = player;
-    }
+    let winner = deriveWinner(gameBoard, players)
 
 
     function handleSelectSquare(rowIndex, colIndex) {
@@ -71,27 +108,6 @@ function App() {
         });
     }
 
-    // winner logic
-    // get the 1st, 2nd and 3rd square row & column indexes for each winning combination ...
-    // ... fetch symbols using these indexes on current gameBoard state and see if they are equal.
-    // if equal then there is a winner
-    // if not, no winner
-    let winner
-
-    for(const combinations of WINNING_COMBINATIONS) {
-        const firstSquareSymbol = gameBoard[combinations[0].row][combinations[0].column]
-        const secondSquareSymbol = gameBoard[combinations[1].row][combinations[1].column]
-        const thirdSquareSymbol = gameBoard[combinations[2].row][combinations[2].column]
-
-        if (
-              firstSquareSymbol &&
-              firstSquareSymbol === secondSquareSymbol &&
-              firstSquareSymbol === thirdSquareSymbol
-            ) {
-              winner = firstSquareSymbol
-        }
-    }
-
     // game draw logic
     // Condition: all squares played and no winner is a draw
     const draw = gameTurns.length === 9 && !winner
@@ -102,6 +118,16 @@ function App() {
         setGameTurns([])
     }
 
+    function handlePlayerNameChange(symbol, newName){
+        console.log(symbol, newName)
+        setPlayers((prevPlayer) => {
+            return {
+                ...prevPlayer,
+                [symbol]: newName,
+            }
+        });
+    }
+
   return (
     <>
       <main>
@@ -109,14 +135,16 @@ function App() {
             <ol id="players" className="highlight-player">
                 {/*use props to pass player 1 and player 2 details */}
                 <Player
-                    initialName='Player 1'
+                    initialName={PLAYERS.X}
                     symbol='X'
                     isActive={activePlayer === "X"}
+                    onChangeName={handlePlayerNameChange}
                 />
                 <Player
-                    initialName='Player 2'
+                    initialName={PLAYERS.O}
                     symbol='O'
                     isActive={activePlayer === "O"}
+                    onChangeName={handlePlayerNameChange}
                 />
             </ol>
             {(winner || draw ) && <GameOver winner={winner} onRestart ={restart}/>}
